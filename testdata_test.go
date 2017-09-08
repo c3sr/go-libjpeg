@@ -39,7 +39,7 @@ import (
 	"image/color"
 	"testing"
 
-	"github.com/rai-project/go-libjpeg/jpeg"
+	"github.com/rai-project/go-libjpeg"
 	"github.com/rai-project/go-libjpeg/test/util"
 )
 

@@ -96,7 +96,7 @@ import (
 	"io"
 	"unsafe"
 
-	"github.com/rai-project/go-libjpeg/rgb"
+	"github.com/rai-project/image/types"
 )
 
 func newDecompress(r io.Reader) *C.struct_jpeg_decompress_struct {
@@ -256,9 +256,9 @@ func decodeYCbCr(dinfo *C.struct_jpeg_decompress_struct) (dest *image.YCbCr, err
 }
 
 // TODO: supports decoding into image.RGBA instead of rgb.Image.
-func decodeRGB(dinfo *C.struct_jpeg_decompress_struct) (dest *rgb.Image, err error) {
+func decodeRGB(dinfo *C.struct_jpeg_decompress_struct) (dest *types.RGBImage, err error) {
 	C.jpeg_calc_output_dimensions(dinfo)
-	dest = rgb.NewImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
+	dest = types.NewRGBImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
 
 	dinfo.out_color_space = C.JCS_RGB
 	readScanLines(dinfo, dest.Pix, dest.Stride)
@@ -266,7 +266,7 @@ func decodeRGB(dinfo *C.struct_jpeg_decompress_struct) (dest *rgb.Image, err err
 }
 
 // DecodeIntoRGB reads a JPEG data stream from r and returns decoded image as an rgb.Image with RGB colors.
-func DecodeIntoRGB(r io.Reader, options *DecoderOptions) (dest *rgb.Image, err error) {
+func DecodeIntoRGB(r io.Reader, options *DecoderOptions) (dest *types.RGBImage, err error) {
 	dinfo := newDecompress(r)
 	if dinfo == nil {
 		return nil, errors.New("allocation failed")
@@ -286,7 +286,7 @@ func DecodeIntoRGB(r io.Reader, options *DecoderOptions) (dest *rgb.Image, err e
 	setupDecoderOptions(dinfo, options)
 
 	C.jpeg_calc_output_dimensions(dinfo)
-	dest = rgb.NewImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
+	dest = types.NewRGBImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
 
 	dinfo.out_color_space = C.JCS_RGB
 	readScanLines(dinfo, dest.Pix, dest.Stride)
