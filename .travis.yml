@@ -11,7 +11,12 @@ env:
 before_install:
   - ./travis-install-libjpeg-turbo.sh "$TURBO_VER"
   - cd $HOME/gopath/src/github.com/rai-project/go-libjpeg
-
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+install:
+- dep ensure -v
+- rm -fr vendor/github.com/Sirupsen
+- find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
+- go build
 script:
   - go test -a -test.v ./...
   - cd jpeg && go test -a -bench . -benchtime 10s
