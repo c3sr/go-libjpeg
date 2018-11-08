@@ -10,7 +10,7 @@ package jpeg
 
 /*
 #cgo linux LDFLAGS: -ljpeg
-#cgo darwin LDFLAGS: -ljpeg-turbo
+#cgo darwin LDFLAGS: -lturbojpeg
 #cgo darwin LDFLAGS: -L/usr/local/opt/jpeg-turbo/lib
 #cgo darwin CFLAGS: -I/usr/local/opt/jpeg-turbo/include
 #include <stdlib.h>
