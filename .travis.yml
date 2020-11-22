@@ -1,21 +1,22 @@
 language: go
 
-go:
-  - 1.10.x
-  - tip
-
+jobs:
+  include:
+    - go: 1.12.x
+    - go: tip
+  allow_failures:
+    - go: tip
+os: linux
+dist: xenial
 env:
-  - TURBO_VER=""
   - TURBO_VER="1.5.1" CGO_LDFLAGS="-L/tmp/libjpeg-turbo/lib64" CGO_CPPFLAGS="-I/tmp/libjpeg-turbo/include" LD_LIBRARY_PATH="/tmp/libjpeg-turbo/lib64"
-
 before_install:
   - ./travis-install-libjpeg-turbo.sh "$TURBO_VER"
-  - cd $HOME/gopath/src/github.com/rai-project/go-libjpeg
+  - cd $HOME/gopath/src/github.com/c3sr/go-libjpeg
   - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 install:
-  - dep ensure
-  - go build
-script:
-  - echo "Skip tests..."
+  - dep ensure -v -vendor-only
+  - go build ./...
+script: true
 after_script:
-  - go test -race -v .
+  - go test -race -v ./...

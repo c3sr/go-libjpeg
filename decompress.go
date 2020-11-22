@@ -96,7 +96,7 @@ import (
 	"io"
 	"unsafe"
 
-	"github.com/rai-project/image/types"
+	"github.com/c3sr/image/types"
 )
 
 func newDecompress(r io.Reader) *C.struct_jpeg_decompress_struct {
