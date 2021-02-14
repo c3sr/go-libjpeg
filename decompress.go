@@ -96,7 +96,7 @@ import (
 	"io"
 	"unsafe"
 
-	"github.com/c3sr/image/types"
+	"github.com/c3sr/go-libjpeg/rgb"
 )
 
 func newDecompress(r io.Reader) *C.struct_jpeg_decompress_struct {
@@ -256,9 +256,9 @@ func decodeYCbCr(dinfo *C.struct_jpeg_decompress_struct) (dest *image.YCbCr, err
 }
 
 // TODO: supports decoding into image.RGBA instead of rgb.Image.
-func decodeRGB(dinfo *C.struct_jpeg_decompress_struct) (dest *types.RGBImage, err error) {
+func decodeRGB(dinfo *C.struct_jpeg_decompress_struct) (dest *rgb.Image, err error) {
 	C.jpeg_calc_output_dimensions(dinfo)
-	dest = types.NewRGBImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
+	dest = rgb.NewImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
 
 	dinfo.out_color_space = C.JCS_RGB
 	readScanLines(dinfo, dest.Pix, dest.Stride)
@@ -266,7 +266,7 @@ func decodeRGB(dinfo *C.struct_jpeg_decompress_struct) (dest *types.RGBImage, er
 }
 
 // DecodeIntoRGB reads a JPEG data stream from r and returns decoded image as an rgb.Image with RGB colors.
-func DecodeIntoRGB(r io.Reader, options *DecoderOptions) (dest *types.RGBImage, err error) {
+func DecodeIntoRGB(r io.Reader, options *DecoderOptions) (dest *rgb.Image, err error) {
 	dinfo := newDecompress(r)
 	if dinfo == nil {
 		return nil, errors.New("allocation failed")
@@ -286,7 +286,7 @@ func DecodeIntoRGB(r io.Reader, options *DecoderOptions) (dest *types.RGBImage, 
 	setupDecoderOptions(dinfo, options)
 
 	C.jpeg_calc_output_dimensions(dinfo)
-	dest = types.NewRGBImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
+	dest = rgb.NewImage(image.Rect(0, 0, int(dinfo.output_width), int(dinfo.output_height)))
 
 	dinfo.out_color_space = C.JCS_RGB
 	readScanLines(dinfo, dest.Pix, dest.Stride)
@@ -294,7 +294,7 @@ func DecodeIntoRGB(r io.Reader, options *DecoderOptions) (dest *types.RGBImage, 
 }
 
 // DecodeIntoRGBA reads a JPEG data stream from r and returns decoded image as an image.RGBA with RGBA colors.
-// This function only works with libjpeg-turbo, not libjpeg.
+// This function only works with libjpeg-trubo, not libjpeg.
 func DecodeIntoRGBA(r io.Reader, options *DecoderOptions) (dest *image.RGBA, err error) {
 	dinfo := newDecompress(r)
 	if dinfo == nil {
@@ -319,7 +319,7 @@ func DecodeIntoRGBA(r io.Reader, options *DecoderOptions) (dest *image.RGBA, err
 
 	colorSpace := getJCS_EXT_RGBA()
 	if colorSpace == C.JCS_UNKNOWN {
-		return nil, errors.New("JCS_EXT_RGBA is not supported (probably built without libjpeg-turbo)")
+		return nil, errors.New("JCS_EXT_RGBA is not supported (probably built without libjpeg-trubo)")
 	}
 
 	dinfo.out_color_space = colorSpace
