@@ -1,11 +1,7 @@
 language: go
-
 jobs:
   include:
-    - go: 1.12.x
-    - go: tip
-  allow_failures:
-    - go: tip
+    - go: 1.15
 os: linux
 dist: xenial
 env:
@@ -13,10 +9,8 @@ env:
 before_install:
   - ./travis-install-libjpeg-turbo.sh "$TURBO_VER"
   - cd $HOME/gopath/src/github.com/c3sr/go-libjpeg
-  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 install:
-  - dep ensure -v -vendor-only
-  - go build ./...
+  - go build -tags=nogpu ./...
 script: true
 after_script:
-  - go test -race -v ./...
+  - go test -tags=nogpu -race -v -cover ./...
